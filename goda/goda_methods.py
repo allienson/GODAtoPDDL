@@ -1,40 +1,52 @@
 import pyhop
 
-def and_seq(state, plan, plan1, plan2):
-	if state.objects[plan1] == True and state.objects[plan2] == True:
-		return [('completed', plan)]
+def and_seq(state, *plans):
+	count = 0
+	for i in range(1, len(plans)):
+		plan = plans[i]
+		if state.objects[plan] == True:
+			count += 1
+	if count == len(plans)-1:
+		return [('completed', plans[0])]
 	else:
 		return False
-
 pyhop.declare_methods('and_seq', and_seq)
 
-
-def and_par(state, plan, plan1, plan2):
-	if state.objects[plan1] == True and state.objects[plan2] == True:
-		return [('completed', plan)]
+def and_par(state, *plans):
+	count = 0
+	for i in range(1, len(plans)):
+		plan = plans[i]
+		if state.objects[plan] == True:
+			count += 1
+	if count == len(plans)-1:
+		return [('completed', plans[0])]
 	else:
 		return False
-
 pyhop.declare_methods('and_par', and_par)
 
-
-def or_seq(state, plan, plan1, plan2):
-	if state.objects[plan1] == True or state.objects[plan2] == True:
-		return [('completed', plan)]
+def or_seq(state, *plans):
+	count = 0
+	for i in range(1, len(plans)):
+		plan = plans[i]
+		if state.objects[plan] == True:
+			count += 1
+	if count != 0:
+		return [('completed', plans[0])]
 	else:
 		return False
-
 pyhop.declare_methods('or_seq', or_seq)
 
-
-def or_par(state, plan, plan1, plan2):
-	if state.objects[plan1] == True or state.objects[plan2] == True:
-		return [('completed', plan)]
+def or_par(state, *plans):
+	count = 0
+	for i in range(1, len(plans)):
+		plan = plans[i]
+		if state.objects[plan] == True:
+			count += 1
+	if count != 0:
+		return [('completed', plans[0])]
 	else:
 		return False
-
 pyhop.declare_methods('or_par', or_par)
-
 
 def k_times(state, plan, k):
 	if k > 0:
@@ -45,9 +57,7 @@ def k_times(state, plan, k):
 			return [('completed', plan), ('completed', plan)]
 	else:
 		return False
-
 pyhop.declare_methods('k_times', k_times)
-
 
 def k_times_par(state, plan, k):
 	if k > 0:
@@ -58,7 +68,6 @@ def k_times_par(state, plan, k):
 			return retorno
 	else:
 		return False
-
 pyhop.declare_methods('k_times_par', k_times_par)
 
 # def k_tries():
@@ -74,9 +83,15 @@ pyhop.declare_methods('k_times_par', k_times_par)
 
 def try_op(state, plan, plan1, plan2):
 	if state.objects[plan] == True:
-		return [('completed', plan1)] 
+		if plan1 == 'skip':
+			return [('skip', plan1)]
+		else:
+			return [('completed', plan1)] 
 	elif state.objects[plan] == False:
-		return [('completed', plan2)] 
+		if plan2 == 'skip':
+			return [('skip', plan2)]
+		else:
+			return [('completed', plan2)] 
 	else:
 		return False
 
@@ -93,8 +108,10 @@ def xor(state, plan, plan1, plan2):
 
 pyhop.declare_methods('xor', xor)
 
+def means_end(state, plan, plan1):
+	if state.objects[plan1] == True:
+		return [('completed', plan)]
+	else:
+		return False
 
-def skip(state, plan):
-	return [('not_completed', plan)]
-
-pyhop.declare_methods('skip',skip)
+pyhop.declare_methods('means_end', means_end)
