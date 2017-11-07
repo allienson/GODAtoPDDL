@@ -98,6 +98,8 @@ Pyhop provides the following classes and functions:
 from __future__ import print_function
 import copy, sys, pprint
 
+from dialogs import dialog
+
 ############################################################
 # States and goals
 
@@ -110,7 +112,6 @@ class Goal():
     """A goal is just a collection of variable bindings."""
     def __init__(self,name):
         self.__name__ = name
-
 
 ### print_state and print_goal are identical except for the name
 
@@ -195,10 +196,18 @@ def pyhop(state,tasks,verbose=0):
     """
     Try to find a plan that accomplishes tasks in state. 
     If successful, return the plan. Otherwise return False.
-    """
-    if verbose>0: print('** pyhop, verbose={}: **\n   state = {}\n   tasks = {}'.format(verbose, state.__name__, tasks))
+   """
+    dialog(state.objects, tasks)
+    if verbose>0: 
+        print('** pyhop, verbose={}: **\n\nstate = {}\n\n'.format(verbose, state.__name__))
+        print("tasks =")
+        for task in tasks:
+            print("\t{}".format(task))
     result = seek_plan(state,tasks,[],0,verbose)
-    if verbose>0: print('\n** result =',result,'\n')
+    if verbose>0: 
+        print('\n\nresult =\n')
+        for item in result:
+            print("\t{}".format(item))
     return result
 
 def seek_plan(state,tasks,plan,depth,verbose=0):
